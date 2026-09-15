@@ -152,14 +152,14 @@ textarea.form-control { min-height: 76px; }
 .page { width: 100%; max-width: 1320px; margin: 0 auto; padding: 1.75rem 1.5rem 2.5rem; flex: 1; }
 @media (max-width: 575.98px) { .page { padding: 1.1rem 1rem 2rem; } }
 .page-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1.4rem; }
-.page-head h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+.page-head h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -.01em; color: var(--biomed-turquesa-600); }
 .page-head p { margin: .2rem 0 0; color: var(--muted); }
 .page-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
 .app-footer { max-width: 1320px; width: 100%; margin: 0 auto; padding: 1rem 1.5rem 1.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; color: #9CA3AF; font-size: .78rem; }
 
 .card { border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); background: var(--surface); }
 .card-header { background: #fff; border-bottom: 1px solid var(--line); padding: .9rem 1.15rem; border-radius: var(--radius) var(--radius) 0 0 !important; display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
-.card-header h2, .card-title-b { font-size: 1rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: .5rem; }
+.card-header h2, .card-title-b { font-size: 1rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: .5rem; color: var(--biomed-turquesa-700); }
 .card-header h2 i { color: var(--biomed-turquesa); }
 .card-body { padding: 1.15rem; }
 .card-footer { background: #FAFBFC; border-top: 1px solid var(--line); }
@@ -170,7 +170,7 @@ textarea.form-control { min-height: 76px; }
 .kpi-icon.rojo { background: var(--biomed-rojo-50); color: var(--biomed-rojo); }
 .kpi-icon.gris { background: #F3F4F6; color: #4B5563; }
 .kpi-label { color: var(--muted); font-size: .8rem; font-weight: 500; }
-.kpi-value { font-size: 1.85rem; font-weight: 700; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.kpi-value { font-size: 1.85rem; font-weight: 700; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--biomed-turquesa-600); }
 .kpi-sub { color: var(--muted); font-size: .76rem; margin-top: .15rem; }
 
 /* Tablas */
@@ -216,7 +216,7 @@ textarea.form-control { min-height: 76px; }
 .dl-grid dt { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
 .dl-grid dd { margin: .1rem 0 0; font-weight: 500; word-break: break-word; }
 .patient-banner { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: center; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--biomed-turquesa); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
-.patient-banner .pb-name { font-size: 1.15rem; font-weight: 700; }
+.patient-banner .pb-name { font-size: 1.15rem; font-weight: 700; color: var(--biomed-turquesa-700); }
 .patient-banner .pb-meta { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; color: var(--ink-2); font-size: .85rem; }
 .patient-banner .pb-meta i { color: var(--biomed-turquesa); margin-right: .2rem; }
 .alert-alergia { background: var(--biomed-rojo-50); color: #9B0F1B; border-radius: 8px; padding: .45rem .75rem; font-size: .84rem; font-weight: 500; }
@@ -280,7 +280,7 @@ textarea.form-control { min-height: 76px; }
 .auth-legal { position: absolute; bottom: 2.25rem; opacity: .75; }
 .auth-panel { display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; background: #fff; }
 .auth-card { width: 100%; max-width: 400px; }
-.auth-card h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: .3rem; }
+.auth-card h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: .3rem; color: var(--biomed-turquesa-600); }
 .auth-card .lead-sm { color: var(--muted); margin-bottom: 1.6rem; }
 .auth-card .form-control { padding: .65rem .85rem; }
 .auth-card .btn-lg { padding: .7rem 1rem; font-size: .95rem; font-weight: 600; }
