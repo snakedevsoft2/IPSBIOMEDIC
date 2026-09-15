@@ -263,12 +263,13 @@ textarea.form-control { min-height: 76px; }
 .auth-body { background: #fff; display: block; }
 .auth-wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: 100vh; }
 .auth-brand {
-  position: relative; overflow: hidden; color: #fff; padding: 3rem 3.5rem; display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden; color: #fff; padding: 3rem 3.5rem; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   background: linear-gradient(145deg, #00A3AD 0%, #008C95 55%, #006C73 100%);
 }
 .auth-brand::before { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%; background: rgba(255, 255, 255, .06); right: -180px; top: -160px; }
 .auth-brand::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 6px; background: var(--biomed-rojo); }
-.auth-logo { height: 58px; width: auto; position: relative; align-self: flex-start; }
+.auth-logo { height: 84px; max-width: 78%; width: auto; position: relative; }
 .auth-copy { position: relative; max-width: 470px; }
 .auth-kicker { display: inline-block; font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: rgba(255, 255, 255, .15); padding: .3rem .7rem; border-radius: 999px; margin-bottom: 1rem; }
 .auth-copy h2 { font-size: 2.2rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
@@ -276,7 +277,7 @@ textarea.form-control { min-height: 76px; }
 .auth-points { list-style: none; padding: 0; margin: 0; display: grid; gap: .8rem; }
 .auth-points li { display: flex; align-items: center; gap: .7rem; font-size: .93rem; }
 .auth-points i { width: 34px; height: 34px; border-radius: 9px; background: rgba(255, 255, 255, .16); display: inline-flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0; }
-.auth-legal { position: relative; opacity: .75; }
+.auth-legal { position: absolute; bottom: 2.25rem; opacity: .75; }
 .auth-panel { display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; background: #fff; }
 .auth-card { width: 100%; max-width: 400px; }
 .auth-card h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: .3rem; }
