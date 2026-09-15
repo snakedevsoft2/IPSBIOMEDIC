@@ -73,6 +73,9 @@ a { text-decoration: none; }
 .form-label .req { color: var(--biomed-rojo); margin-left: 2px; }
 .form-control, .form-select { border-radius: 8px; border-color: #D8DDE3; font-size: .9rem; padding: .5rem .75rem; }
 .form-control-sm, .form-select-sm { padding: .3rem .55rem; font-size: .84rem; }
+/* Espacio para la flecha del desplegable */
+.form-select { padding-right: 2.25rem; }
+.form-select-sm { padding-right: 2rem; background-position: right .55rem center; }
 .form-control:focus, .form-select:focus, .form-check-input:focus {
   border-color: var(--biomed-turquesa); box-shadow: 0 0 0 .2rem rgba(0, 163, 173, .18);
 }
