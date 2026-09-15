@@ -1,0 +1,17 @@
+# Configuración con credenciales (NO subir nunca)
+/config/config.php
+
+# Archivos generados en tiempo de ejecución
+/storage/logs/*
+/storage/tmp/*
+/storage/fonts/*
+/storage/firmas/*
+!/storage/*/.gitkeep
+/assets/uploads/*
+!/assets/uploads/.htaccess
+
+# Sistema
+Thumbs.db
+.DS_Store
+*.log
+*.sql.gz
