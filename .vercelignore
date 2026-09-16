@@ -1,10 +1,13 @@
 # No se sirven ni se necesitan en tiempo de ejecución en Vercel.
 # (storage/fonts/ SÍ se incluye: es la caché de fuentes de dompdf, versionada en git).
-LOGO/
-IMG/
-storage/logs/
-storage/tmp/
-storage/firmas/
-assets/uploads/
-database/*.sql
-README.md
+# Anclados con "/" inicial: sin eso, "IMG/" o "LOGO/" también coincidirían
+# con carpetas del mismo nombre en cualquier nivel (ej. assets/img/), que sí
+# se necesitan.
+/LOGO/
+/IMG/
+/storage/logs/
+/storage/tmp/
+/storage/firmas/
+/assets/uploads/
+/database/*.sql
+/README.md
