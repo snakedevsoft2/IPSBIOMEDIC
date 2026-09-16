@@ -89,7 +89,10 @@ final class Storage
         if ($rutaRel === '') {
             return '';
         }
-        if (self::enVercel()) {
+        // Los logos por defecto (assets/img/...) son archivos estáticos reales que
+        // se despliegan igual en Hostinger y en Vercel; solo lo que un administrador
+        // sube a mano (assets/uploads/...) vive en la tabla `archivos` en Vercel.
+        if (self::enVercel() && str_starts_with($rutaRel, 'assets/uploads/')) {
             return 'index.php?r=archivo&ruta=' . urlencode($rutaRel);
         }
         return $rutaRel . '?v=' . (int) @filemtime(BASE_PATH . '/' . $rutaRel);

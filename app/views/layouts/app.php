@@ -121,7 +121,7 @@ $ips = setting('ips_nombre', 'IPS BIOMED');
 
 <footer class="app-footer">
   <span><?= e($ips) ?><?= setting('ips_nit') ? ' · NIT ' . e(setting('ips_nit')) : '' ?></span>
-  <span>Historia clínica electrónica · v<?= APP_VERSION ?></span>
+  <span>Historia clínica electrónica · v<?= APP_VERSION ?> · Desarrollado por Snakedev</span>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

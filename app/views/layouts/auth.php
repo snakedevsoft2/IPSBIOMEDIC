@@ -17,7 +17,7 @@
   <div class="auth-wrap">
     <section class="auth-brand">
       <img src="<?= e(logo_url('oscuro')) ?>" alt="<?= e($ips) ?>" class="auth-logo">
-      <small class="auth-legal">© <?= date('Y') ?> <?= e($ips) ?></small>
+      <small class="auth-legal">© <?= date('Y') ?> <?= e($ips) ?> · Desarrollado por Snakedev</small>
     </section>
 
     <section class="auth-panel">
