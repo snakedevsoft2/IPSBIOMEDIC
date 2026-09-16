@@ -103,6 +103,21 @@ final class PacientesController extends Controller
                 }
                 $row['eps_id'] = $data['eps_id'] !== '' ? (int) $data['eps_id'] : null;
 
+                if (input('quitar_foto') !== '' && $paciente && $paciente['foto']) {
+                    Storage::delete($paciente['foto']);
+                    $row['foto'] = null;
+                } elseif (($_FILES['foto']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    [$fotoOk, $fotoResultado] = guardar_imagen($_FILES['foto'], 'storage/pacientes', 'paciente', 900, 4_000_000);
+                    if ($fotoOk) {
+                        if ($paciente && $paciente['foto']) {
+                            Storage::delete($paciente['foto']);
+                        }
+                        $row['foto'] = $fotoResultado;
+                    } else {
+                        flash('danger', 'Foto: ' . $fotoResultado);
+                    }
+                }
+
                 if ($paciente) {
                     $id = (int) $paciente['id'];
                     DB::update('pacientes', $row, 'id = ?', [$id]);
@@ -205,6 +220,7 @@ final class PacientesController extends Controller
         $this->view('pacientes/ver', [
             'title' => nombre_paciente($p), 'p' => $p, 'ant' => $ant, 'consultas' => $consultas,
             'admisiones' => $admisiones, 'clinico' => $clinico,
+            'foto' => $p['foto'] ? image_data_uri($p['foto']) : '',
         ]);
     }
 }

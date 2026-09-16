@@ -40,16 +40,16 @@ final class PerfilController extends Controller
                 if (!$ok) {
                     flash('danger', $resultado);
                 } else {
-                    if ($u['firma'] && is_file(BASE_PATH . '/' . $u['firma'])) {
-                        @unlink(BASE_PATH . '/' . $u['firma']);
+                    if ($u['firma']) {
+                        Storage::delete($u['firma']);
                     }
                     DB::update('usuarios', ['firma' => $resultado], 'id = ?', [$u['id']]);
                     Audit::log('firma_actualizada', 'usuarios', (int) $u['id']);
                     flash('success', 'Firma cargada. Aparecerá en las historias clínicas y fórmulas que finalice.');
                 }
             } elseif ($accion === 'quitar_firma') {
-                if ($u['firma'] && is_file(BASE_PATH . '/' . $u['firma'])) {
-                    @unlink(BASE_PATH . '/' . $u['firma']);
+                if ($u['firma']) {
+                    Storage::delete($u['firma']);
                 }
                 DB::update('usuarios', ['firma' => null], 'id = ?', [$u['id']]);
                 flash('success', 'Firma eliminada.');
@@ -60,7 +60,7 @@ final class PerfilController extends Controller
         $this->view('perfil/index', [
             'title' => 'Mi perfil',
             'u' => $u,
-            'firma' => $u['firma'] && is_file(BASE_PATH . '/' . $u['firma']) ? image_data_uri(BASE_PATH . '/' . $u['firma']) : '',
+            'firma' => $u['firma'] ? image_data_uri($u['firma']) : '',
         ]);
     }
 }

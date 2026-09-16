@@ -464,7 +464,7 @@ function badge_estado(string $estado): string
 function logo_path(string $variante = 'claro'): string
 {
     $custom = setting($variante === 'oscuro' ? 'logo_oscuro' : 'logo_claro');
-    if ($custom !== '' && is_file(BASE_PATH . '/' . $custom)) {
+    if ($custom !== '' && Storage::exists($custom)) {
         return $custom;
     }
     return $variante === 'oscuro' ? 'assets/img/logo-white.png' : 'assets/img/logo-color.png';
@@ -472,18 +472,17 @@ function logo_path(string $variante = 'claro'): string
 
 function logo_url(string $variante = 'claro'): string
 {
-    $path = logo_path($variante);
-    return $path . '?v=' . (int) @filemtime(BASE_PATH . '/' . $path);
+    return Storage::url(logo_path($variante));
 }
 
-function image_data_uri(string $absPath): string
+/** @param string $rutaRel ruta relativa al proyecto (no absoluta) */
+function image_data_uri(string $rutaRel): string
 {
-    if (!is_file($absPath)) {
+    $archivo = Storage::get($rutaRel);
+    if ($archivo === null) {
         return '';
     }
-    $info = @getimagesize($absPath);
-    $mime = $info['mime'] ?? 'image/png';
-    return 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($absPath));
+    return 'data:' . $archivo['mime'] . ';base64,' . base64_encode($archivo['contenido']);
 }
 
 /**
@@ -516,12 +515,11 @@ function guardar_imagen(array $file, string $dirRel, string $prefijo, int $maxAn
     imagefill($dst, 0, 0, imagecolorallocatealpha($dst, 0, 0, 0, 127));
     imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
 
-    $absDir = BASE_PATH . '/' . $dirRel;
-    if (!is_dir($absDir)) {
-        mkdir($absDir, 0755, true);
-    }
     $name = $prefijo . '_' . bin2hex(random_bytes(6)) . '.png';
-    imagepng($dst, $absDir . '/' . $name, 9);
+    ob_start();
+    imagepng($dst, null, 9);
+    $bytes = (string) ob_get_clean();
+    Storage::put($dirRel . '/' . $name, $bytes, 'image/png');
     return [true, $dirRel . '/' . $name];
 }
 

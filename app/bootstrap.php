@@ -4,16 +4,24 @@ declare(strict_types=1);
 define('BASE_PATH', dirname(__DIR__));
 const APP_VERSION = '1.0.0';
 
-if (!is_file(BASE_PATH . '/config/config.php')) {
+// Vercel expone la variable de entorno VERCEL=1 en tiempo de ejecución.
+// Ahí el filesystem es de solo lectura, así que config/config.php (que en el
+// hosting compartido escribe install.php) no se puede crear: la configuración
+// sale de variables de entorno del proyecto Vercel. Ver config/config.vercel.php.
+if (is_file(BASE_PATH . '/config/config.php')) {
+    $GLOBALS['config'] = require BASE_PATH . '/config/config.php';
+} elseif (getenv('VERCEL') !== false) {
+    $GLOBALS['config'] = require BASE_PATH . '/config/config.vercel.php';
+} else {
     header('Location: install.php');
     exit;
 }
 
-$GLOBALS['config'] = require BASE_PATH . '/config/config.php';
-
 require BASE_PATH . '/vendor/autoload.php';
 require __DIR__ . '/core/helpers.php';
 require __DIR__ . '/core/DB.php';
+require __DIR__ . '/core/Storage.php';
+require __DIR__ . '/core/DbSessionHandler.php';
 require __DIR__ . '/core/Auth.php';
 require __DIR__ . '/core/Audit.php';
 require __DIR__ . '/core/Mailer.php';
@@ -28,7 +36,9 @@ $debug = (bool) config('app.debug', false);
 error_reporting(E_ALL);
 ini_set('display_errors', $debug ? '1' : '0');
 ini_set('log_errors', '1');
-ini_set('error_log', BASE_PATH . '/storage/logs/php-error.log');
+if (!Storage::enVercel()) {
+    ini_set('error_log', BASE_PATH . '/storage/logs/php-error.log');
+}
 
 set_exception_handler(static function (Throwable $e) use ($debug): void {
     error_log('[' . date('c') . '] ' . $e);
@@ -48,6 +58,9 @@ session_set_cookie_params([
     'samesite' => 'Lax',
 ]);
 ini_set('session.use_strict_mode', '1');
+if (Storage::enVercel()) {
+    session_set_save_handler(new DbSessionHandler(), true);
+}
 session_start();
 
 header('X-Content-Type-Options: nosniff');

@@ -38,8 +38,8 @@ final class ConfiguracionController extends Controller
             foreach (['logo_claro' => 'claro', 'logo_oscuro' => 'oscuro'] as $clave => $etiqueta) {
                 if (input('quitar_' . $clave) !== '') {
                     $anterior = setting($clave);
-                    if ($anterior && is_file(BASE_PATH . '/' . $anterior)) {
-                        @unlink(BASE_PATH . '/' . $anterior);
+                    if ($anterior) {
+                        Storage::delete($anterior);
                     }
                     set_setting($clave, '');
                     continue;
@@ -53,8 +53,8 @@ final class ConfiguracionController extends Controller
                     continue;
                 }
                 $anterior = setting($clave);
-                if ($anterior && is_file(BASE_PATH . '/' . $anterior)) {
-                    @unlink(BASE_PATH . '/' . $anterior);
+                if ($anterior) {
+                    Storage::delete($anterior);
                 }
                 set_setting($clave, $resultado);
             }

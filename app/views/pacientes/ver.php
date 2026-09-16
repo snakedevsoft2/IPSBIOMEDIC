@@ -9,7 +9,11 @@ $dato = static fn ($v): string => ($v === null || $v === '') ? '<span class="tex
 echo page_head('Ficha del paciente', 'Registro desde ' . fecha($p['creado_en']), $acciones);
 ?>
 <div class="patient-banner">
-  <span class="avatar avatar-lg"><?= e(iniciales(nombre_paciente($p))) ?></span>
+  <?php if ($foto): ?>
+    <img src="<?= e($foto) ?>" alt="Foto de <?= e(nombre_paciente($p)) ?>" class="avatar avatar-lg" style="object-fit:cover">
+  <?php else: ?>
+    <span class="avatar avatar-lg"><?= e(iniciales(nombre_paciente($p))) ?></span>
+  <?php endif; ?>
   <div class="flex-grow-1">
     <div class="pb-name"><?= e(nombre_paciente($p)) ?></div>
     <div class="pb-meta">

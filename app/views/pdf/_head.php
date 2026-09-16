@@ -47,6 +47,7 @@ $landscape = $landscape ?? false;
   .center { text-align: center; }
   .big { font-size: 10px; font-weight: bold; }
   .nowrap { white-space: nowrap; }
+  .foto-paciente { width: 52px; border: 0.6px solid #d9dee4; border-radius: 3px; }
   .firma-wrap { margin-top: 24px; page-break-inside: avoid; }
   .firma-img { height: 58px; }
   .firma-linea { border-top: 0.8px solid #1f2937; width: 240px; padding-top: 3px; }

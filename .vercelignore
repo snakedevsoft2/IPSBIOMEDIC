@@ -1,0 +1,10 @@
+# No se sirven ni se necesitan en tiempo de ejecución en Vercel.
+# (storage/fonts/ SÍ se incluye: es la caché de fuentes de dompdf, versionada en git).
+LOGO/
+IMG/
+storage/logs/
+storage/tmp/
+storage/firmas/
+assets/uploads/
+database/*.sql
+README.md

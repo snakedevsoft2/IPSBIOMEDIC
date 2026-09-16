@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS pacientes (
   responsable_telefono VARCHAR(30) NULL,
   responsable_parentesco VARCHAR(40) NULL,
   observaciones TEXT NULL,
+  foto VARCHAR(255) NULL,
   creado_por INT UNSIGNED NULL,
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   actualizado_en DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -279,6 +280,22 @@ CREATE TABLE IF NOT EXISTS auditoria (
   KEY idx_auditoria_fecha (creado_en),
   KEY idx_auditoria_usuario (usuario_id),
   KEY idx_auditoria_entidad (entidad, entidad_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Solo se usan cuando la app corre en Vercel (ver app/core/Storage.php y
+-- app/core/DbSessionHandler.php); en el hosting compartido quedan vacías.
+CREATE TABLE IF NOT EXISTS archivos (
+  ruta VARCHAR(255) NOT NULL PRIMARY KEY,
+  mime VARCHAR(100) NOT NULL DEFAULT 'image/png',
+  contenido LONGBLOB NOT NULL,
+  actualizado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS sesiones (
+  id VARCHAR(128) NOT NULL PRIMARY KEY,
+  datos MEDIUMBLOB NOT NULL,
+  actualizado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_sesiones_actualizado (actualizado_en)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

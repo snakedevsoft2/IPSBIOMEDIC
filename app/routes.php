@@ -13,6 +13,8 @@ return [
     'restablecer'           => ['Auth@reset', null],
     'logout'                => ['Auth@logout', '*'],
 
+    'archivo'               => ['Archivo@ver', null],
+
     'dashboard'             => ['Dashboard@index', '*'],
     'perfil'                => ['Perfil@index', '*'],
 

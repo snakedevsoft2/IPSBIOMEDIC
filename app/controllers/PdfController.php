@@ -9,7 +9,7 @@ final class PdfController extends Controller
         if ($b['c']['estado'] !== 'cerrada') {
             abort(403, 'La historia clínica debe estar finalizada para imprimir documentos.');
         }
-        $b['firma'] = $b['c']['med_firma'] ? image_data_uri(BASE_PATH . '/' . $b['c']['med_firma']) : '';
+        $b['firma'] = $b['c']['med_firma'] ? image_data_uri($b['c']['med_firma']) : '';
         return $b;
     }
 

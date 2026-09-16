@@ -16,7 +16,7 @@ echo page_head(
   <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-1"></i>Revise los campos marcados en rojo.</div>
 <?php endif; ?>
 
-<form method="post" action="<?= url($editando ? 'pacientes/editar' : 'pacientes/crear', $params) ?>" novalidate>
+<form method="post" action="<?= url($editando ? 'pacientes/editar' : 'pacientes/crear', $params) ?>" enctype="multipart/form-data" novalidate>
   <?= csrf_field() ?>
 
   <div class="card mb-3">
@@ -54,6 +54,31 @@ echo page_head(
         <div class="col-md-3">
           <label class="form-label">Segundo apellido</label>
           <input name="segundo_apellido" value="<?= $val('segundo_apellido') ?>" class="form-control" maxlength="60">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header"><h2><i class="bi bi-camera"></i>Foto del paciente</h2></div>
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <?php if ($editando && !empty($paciente['foto'])): ?>
+          <div class="col-auto">
+            <img src="<?= e(image_data_uri($paciente['foto'])) ?>" alt="Foto actual" class="rounded border" style="width:90px;height:90px;object-fit:cover">
+          </div>
+          <div class="col-auto form-check">
+            <input type="checkbox" class="form-check-input" id="quitar_foto" name="quitar_foto" value="1">
+            <label class="form-check-label small" for="quitar_foto">Quitar la foto actual</label>
+          </div>
+          <div class="w-100"></div>
+        <?php endif; ?>
+        <div class="col-md-6">
+          <label class="form-label" for="foto">
+            <?= $editando && !empty($paciente['foto']) ? 'Reemplazar foto' : 'Tomar o cargar foto (opcional)' ?>
+          </label>
+          <input type="file" id="foto" name="foto" class="form-control" accept="image/png,image/jpeg" capture="environment">
+          <div class="form-text">En un celular o tableta abre la cámara directamente. Se usa para identificar al paciente en la historia clínica y aparece en los PDF.</div>
         </div>
       </div>
     </div>

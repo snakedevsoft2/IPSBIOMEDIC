@@ -7,6 +7,18 @@
 declare(strict_types=1);
 
 define('BASE_PATH', __DIR__);
+
+// En Vercel el filesystem es de solo lectura: este instalador no puede
+// escribir config/config.php ni funcionaría entre invocaciones serverless.
+// Ahí la configuración se pone por variables de entorno (ver
+// config/config.vercel.php) y el esquema se importa una sola vez a mano
+// contra la base de datos externa.
+if (getenv('VERCEL') !== false) {
+    http_response_code(404);
+    echo 'El instalador web no está disponible en este entorno. La base de datos y la configuración ya están definidas por variables de entorno.';
+    exit;
+}
+
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', '1');

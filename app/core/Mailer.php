@@ -53,7 +53,7 @@ final class Mailer
 
     private static function layout(string $title, string $body): string
     {
-        $logo = rtrim((string) config('app.url'), '/') . '/' . logo_path('oscuro');
+        $logo = rtrim((string) config('app.url'), '/') . '/' . logo_url('oscuro');
         $ips = e(setting('ips_nombre', 'IPS BIOMED'));
         $pie = e(trim(setting('ips_direccion') . ' · ' . setting('ips_telefono'), ' ·'));
         return <<<HTML

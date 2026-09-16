@@ -8,21 +8,31 @@ final class Pdf
 {
     public static function render(string $view, array $data, string $filename, string $orientation = 'portrait'): never
     {
-        foreach (['storage/tmp', 'storage/fonts'] as $dir) {
-            if (!is_dir(BASE_PATH . '/' . $dir)) {
-                mkdir(BASE_PATH . '/' . $dir, 0755, true);
+        // En Vercel BASE_PATH es de solo lectura; dompdf necesita un directorio
+        // escribible para sus archivos temporales y su caché de fuentes, así
+        // que ahí se usa el /tmp del sistema en vez de storage/.
+        if (Storage::enVercel()) {
+            $tempDir = sys_get_temp_dir();
+            $fontCache = sys_get_temp_dir();
+        } else {
+            foreach (['storage/tmp', 'storage/fonts'] as $dir) {
+                if (!is_dir(BASE_PATH . '/' . $dir)) {
+                    mkdir(BASE_PATH . '/' . $dir, 0755, true);
+                }
             }
+            $tempDir = BASE_PATH . '/storage/tmp';
+            $fontCache = BASE_PATH . '/storage/fonts';
         }
 
-        $data['logo'] = image_data_uri(BASE_PATH . '/' . logo_path('claro'));
+        $data['logo'] = image_data_uri(logo_path('claro'));
         $html = render_template(BASE_PATH . '/app/views/pdf/' . $view . '.php', $data);
 
         $options = new Options();
         $options->set('isRemoteEnabled', false);
         $options->set('isPhpEnabled', false);
         $options->set('defaultFont', 'DejaVu Sans');
-        $options->set('tempDir', BASE_PATH . '/storage/tmp');
-        $options->set('fontCache', BASE_PATH . '/storage/fonts');
+        $options->set('tempDir', $tempDir);
+        $options->set('fontCache', $fontCache);
         $options->setChroot([BASE_PATH]);
 
         $pdf = new Dompdf($options);
