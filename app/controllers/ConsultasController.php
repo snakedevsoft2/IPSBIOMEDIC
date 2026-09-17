@@ -177,10 +177,65 @@ final class ConsultasController extends Controller
         ]);
     }
 
+    private static function campoTexto(array $r, string $k, int $len): ?string
+    {
+        return nullable(mb_substr(is_string($r[$k] ?? null) ? trim(utf8_limpio($r[$k])) : '', 0, $len));
+    }
+
+    private function parseDiagnosticos(): array
+    {
+        $dx = [];
+        foreach (input_array('dx') as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $codigo = strtoupper(str_replace(['.', ' '], '', (string) self::campoTexto($row, 'codigo', 12)));
+            $descripcion = (string) self::campoTexto($row, 'descripcion', 255);
+            if ($codigo === '' && $descripcion === '') {
+                continue;
+            }
+            if ($codigo !== '' && ($oficial = DB::value('SELECT descripcion FROM cie10 WHERE codigo = ?', [$codigo]))) {
+                $descripcion = $oficial;
+            }
+            $clase = self::campoTexto($row, 'clase', 40);
+            $dx[] = [
+                'codigo'      => mb_substr($codigo, 0, 10),
+                'descripcion' => $descripcion,
+                'tipo'        => $dx ? 'Relacionado' : 'Principal',
+                'clase'       => in_array($clase, catalogo('clase_diagnostico'), true) ? $clase : 'Impresión diagnóstica',
+                'orden'       => count($dx),
+            ];
+        }
+        return $dx;
+    }
+
+    private function parseMedicamentos(): array
+    {
+        $items = [];
+        foreach (input_array('med') as $row) {
+            if (!is_array($row) || self::campoTexto($row, 'medicamento', 200) === null) {
+                continue;
+            }
+            $cantidad = max(1, min(9999, (int) ($row['cantidad'] ?? 1)));
+            $items[] = [
+                'medicamento'        => self::campoTexto($row, 'medicamento', 200),
+                'concentracion'      => self::campoTexto($row, 'concentracion', 60),
+                'forma_farmaceutica' => self::campoTexto($row, 'forma_farmaceutica', 60),
+                'via'                => self::campoTexto($row, 'via', 40),
+                'dosis'              => self::campoTexto($row, 'dosis', 80),
+                'frecuencia'         => self::campoTexto($row, 'frecuencia', 80),
+                'duracion'           => self::campoTexto($row, 'duracion', 60),
+                'cantidad'           => $cantidad,
+                'cantidad_letras'    => numero_letras($cantidad),
+                'indicaciones'       => self::campoTexto($row, 'indicaciones', 1000),
+                'orden'              => count($items),
+            ];
+        }
+        return $items;
+    }
+
     private function recolectar(): array
     {
-        $txt = static fn (array $r, string $k, int $len): ?string => nullable(mb_substr(is_string($r[$k] ?? null) ? trim(utf8_limpio($r[$k])) : '', 0, $len));
-
         $consulta = [];
         foreach (self::TEXTOS as $k) {
             $consulta[$k] = nullable(input($k));
@@ -207,62 +262,21 @@ final class ConsultasController extends Controller
             $antecedentes[$k] = nullable(input('ant_' . $k));
         }
 
-        $dx = [];
-        foreach (input_array('dx') as $row) {
-            if (!is_array($row)) {
-                continue;
-            }
-            $codigo = strtoupper(str_replace(['.', ' '], '', (string) $txt($row, 'codigo', 12)));
-            $descripcion = (string) $txt($row, 'descripcion', 255);
-            if ($codigo === '' && $descripcion === '') {
-                continue;
-            }
-            if ($codigo !== '' && ($oficial = DB::value('SELECT descripcion FROM cie10 WHERE codigo = ?', [$codigo]))) {
-                $descripcion = $oficial;
-            }
-            $clase = $txt($row, 'clase', 40);
-            $dx[] = [
-                'codigo'      => mb_substr($codigo, 0, 10),
-                'descripcion' => $descripcion,
-                'tipo'        => $dx ? 'Relacionado' : 'Principal',
-                'clase'       => in_array($clase, catalogo('clase_diagnostico'), true) ? $clase : 'Impresión diagnóstica',
-                'orden'       => count($dx),
-            ];
-        }
-
-        $items = [];
-        foreach (input_array('med') as $row) {
-            if (!is_array($row) || $txt($row, 'medicamento', 200) === null) {
-                continue;
-            }
-            $cantidad = max(1, min(9999, (int) ($row['cantidad'] ?? 1)));
-            $items[] = [
-                'medicamento'        => $txt($row, 'medicamento', 200),
-                'concentracion'      => $txt($row, 'concentracion', 60),
-                'forma_farmaceutica' => $txt($row, 'forma_farmaceutica', 60),
-                'via'                => $txt($row, 'via', 40),
-                'dosis'              => $txt($row, 'dosis', 80),
-                'frecuencia'         => $txt($row, 'frecuencia', 80),
-                'duracion'           => $txt($row, 'duracion', 60),
-                'cantidad'           => $cantidad,
-                'cantidad_letras'    => numero_letras($cantidad),
-                'indicaciones'       => $txt($row, 'indicaciones', 1000),
-                'orden'              => count($items),
-            ];
-        }
+        $dx = $this->parseDiagnosticos();
+        $items = $this->parseMedicamentos();
 
         $ordenes = [];
         foreach (input_array('ord') as $row) {
-            if (!is_array($row) || $txt($row, 'descripcion', 255) === null) {
+            if (!is_array($row) || self::campoTexto($row, 'descripcion', 255) === null) {
                 continue;
             }
-            $tipo = $txt($row, 'tipo', 40);
+            $tipo = self::campoTexto($row, 'tipo', 40);
             $ordenes[] = [
                 'tipo'        => in_array($tipo, catalogo('tipo_orden'), true) ? $tipo : 'Otro',
-                'codigo'      => $txt($row, 'codigo', 12),
-                'descripcion' => $txt($row, 'descripcion', 255),
+                'codigo'      => self::campoTexto($row, 'codigo', 12),
+                'descripcion' => self::campoTexto($row, 'descripcion', 255),
                 'cantidad'    => max(1, min(999, (int) ($row['cantidad'] ?? 1))),
-                'observacion' => $txt($row, 'observacion', 1000),
+                'observacion' => self::campoTexto($row, 'observacion', 1000),
                 'orden'       => count($ordenes),
             ];
         }
@@ -339,6 +353,134 @@ final class ConsultasController extends Controller
         $bundle = Clinica::consulta($this->id()) ?? abort(404, 'Atención no encontrada.');
         Audit::log('historia_consultada', 'consultas', (int) $bundle['c']['id']);
         $this->view('consultas/ver', $bundle + ['title' => 'Historia clínica']);
+    }
+
+    public function rapida(): void
+    {
+        $u = user();
+        $pacienteId = $this->id('paciente_id');
+        $documento = strtoupper(input('documento'));
+        $noEncontrado = '';
+
+        if (!$pacienteId && $documento !== '') {
+            $encontrados = DB::all('SELECT id FROM pacientes WHERE numero_documento = ? LIMIT 2', [$documento]);
+            if (count($encontrados) === 1) {
+                redirect('consultas/rapida', ['paciente_id' => $encontrados[0]['id']]);
+            }
+            $noEncontrado = $documento;
+        }
+
+        $paciente = $pacienteId
+            ? DB::row('SELECT p.*, e.nombre AS eps_nombre FROM pacientes p LEFT JOIN eps e ON e.id = p.eps_id WHERE p.id = ?', [$pacienteId])
+            : null;
+        if ($pacienteId && !$paciente) {
+            abort(404, 'Paciente no encontrado.');
+        }
+
+        $activa = $paciente ? DB::value(
+            "SELECT id FROM admisiones WHERE paciente_id = ? AND estado IN ('en_espera', 'en_atencion') AND fecha_hora >= CURDATE()",
+            [$paciente['id']]
+        ) : null;
+
+        $data = ['motivo_consulta' => '', 'enfermedad_actual' => '', 'plan_manejo' => '', 'proximo_control' => ''];
+        $errors = [];
+        $dx = [];
+        $items = [];
+
+        if (is_post() && $paciente && !$activa) {
+            foreach (array_keys($data) as $k) {
+                $data[$k] = nullable(mb_substr(trim(utf8_limpio(input($k))), 0, $k === 'proximo_control' ? 120 : 6000));
+            }
+            $dx = $this->parseDiagnosticos();
+            $items = $this->parseMedicamentos();
+            $formulaObs = nullable(input('formula_observaciones'));
+
+            if (!$data['motivo_consulta']) {
+                $errors['motivo_consulta'] = 'Describa el motivo de la consulta.';
+            }
+            if (!$data['enfermedad_actual']) {
+                $errors['enfermedad_actual'] = 'Describa la evolución del paciente.';
+            }
+            if (!$dx) {
+                $errors['dx'] = 'Agregue al menos un diagnóstico CIE-10.';
+            } else {
+                foreach ($dx as $x) {
+                    if (!preg_match('/^[A-Z]\d{2}[0-9A-Z]{0,2}$/', $x['codigo']) || $x['descripcion'] === '') {
+                        $errors['dx'] = 'Ingrese un código CIE-10 y descripción válidos en todos los diagnósticos.';
+                        break;
+                    }
+                }
+            }
+            if (!$data['plan_manejo']) {
+                $errors['plan_manejo'] = 'Describa el plan de manejo / conducta.';
+            }
+
+            if (!$errors) {
+                $consultaId = DB::transaction(function () use ($u, $paciente, $data, $dx, $items, $formulaObs): int {
+                    $ahora = date('Y-m-d H:i:s');
+                    $admisionId = DB::insert('admisiones', [
+                        'paciente_id'   => $paciente['id'],
+                        'medico_id'     => $u['id'],
+                        'fecha_hora'    => $ahora,
+                        'tipo_consulta' => 'Control',
+                        'modalidad'     => 'Intramural',
+                        'motivo'        => $data['motivo_consulta'],
+                        'finalidad'     => 'Control y seguimiento',
+                        'causa_externa' => 'Enfermedad general',
+                        'eps_id'        => $paciente['eps_id'],
+                        'regimen'       => $paciente['regimen'],
+                        'estado'        => 'atendida',
+                        'creado_por'    => $u['id'],
+                        'atendida_en'   => $ahora,
+                    ]);
+                    $consultaId = DB::insert('consultas', [
+                        'admision_id'       => $admisionId,
+                        'paciente_id'       => $paciente['id'],
+                        'medico_id'         => $u['id'],
+                        'motivo_consulta'   => $data['motivo_consulta'],
+                        'enfermedad_actual' => $data['enfermedad_actual'],
+                        'plan_manejo'       => $data['plan_manejo'],
+                        'proximo_control'   => $data['proximo_control'],
+                        'estado'            => 'cerrada',
+                        'cerrada_en'        => $ahora,
+                    ]);
+                    foreach ($dx as $row) {
+                        DB::insert('consulta_diagnosticos', ['consulta_id' => $consultaId] + $row);
+                    }
+                    if ($items) {
+                        $formulaId = DB::insert('formulas', ['consulta_id' => $consultaId, 'observaciones' => $formulaObs]);
+                        foreach ($items as $item) {
+                            DB::insert('formula_items', ['formula_id' => $formulaId] + $item);
+                        }
+                    }
+                    return $consultaId;
+                });
+                Audit::log('evolucion_rapida', 'consultas', $consultaId, nombre_paciente($paciente));
+                flash('success', 'Evolución registrada. Ya puede imprimir la historia clínica y la fórmula.');
+                redirect('consultas/ver', ['id' => $consultaId]);
+            }
+        }
+
+        $previas = $paciente ? DB::all(
+            "SELECT c.id, c.cerrada_en, u.nombres, u.apellidos,
+                    (SELECT CONCAT(d.codigo, ' · ', d.descripcion) FROM consulta_diagnosticos d WHERE d.consulta_id = c.id AND d.tipo = 'Principal' LIMIT 1) AS dx
+             FROM consultas c JOIN usuarios u ON u.id = c.medico_id
+             WHERE c.paciente_id = ? AND c.estado = 'cerrada' ORDER BY c.cerrada_en DESC LIMIT 5",
+            [$paciente['id']]
+        ) : [];
+
+        $this->view('consultas/rapida', [
+            'title'        => 'Evolución y fórmula rápida',
+            'paciente'     => $paciente,
+            'noEncontrado' => $noEncontrado,
+            'activa'       => $activa,
+            'data'         => $data,
+            'errors'       => $errors,
+            'dx'           => $dx,
+            'items'        => $items,
+            'previas'      => $previas,
+            'medicamentos' => DB::all('SELECT nombre, concentracion, forma_farmaceutica FROM medicamentos WHERE activo = 1 ORDER BY nombre'),
+        ]);
     }
 
     public function nota(): void

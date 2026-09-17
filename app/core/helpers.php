@@ -565,6 +565,7 @@ function menu_items(): array
         ['admisiones', 'Sala de espera', 'bi-people', '*'],
         ['pacientes', 'Pacientes', 'bi-person-vcard', '*'],
         ['consultas', 'Historias clínicas', 'bi-journal-medical', ['administrador', 'medico', 'auxiliar']],
+        ['consultas/rapida', 'Evolución rápida', 'bi-capsule', ['administrador', 'medico']],
         ['reportes', 'Informes', 'bi-bar-chart-line', ['administrador', 'medico']],
         ['_admin', 'Administración', 'bi-gear', ['administrador'], [
             ['usuarios', 'Usuarios', 'bi-person-gear'],

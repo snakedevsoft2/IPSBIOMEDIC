@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     label: "Atenciones",
     tooltip: { title: function (items) { return items[0].label + " de ' . e($nombreMes) . '"; } }
   });
-  biomedBar("chartCurso", ' . json_encode(array_keys($grupos), JSON_UNESCAPED_UNICODE) . ', ' . json_encode(array_values($grupos)) . ', { horizontal: true, label: "Pacientes atendidos" });
 });
 </script>');
 ?>
@@ -65,19 +64,13 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 <div class="row g-3 mb-3">
-  <div class="col-lg-8">
+  <div class="col-12">
     <div class="card h-100">
       <div class="card-header">
         <h2><i class="bi bi-bar-chart"></i>Pacientes atendidos por día</h2>
         <span class="text-muted small"><?= e($meses[$mes] ?? '') ?> · Total <?= number_format($kpi['mes'], 0, ',', '.') ?></span>
       </div>
       <div class="card-body"><div class="chart-box"><canvas id="chartDias" aria-label="Atenciones por día" role="img"></canvas></div></div>
-    </div>
-  </div>
-  <div class="col-lg-4">
-    <div class="card h-100">
-      <div class="card-header"><h2><i class="bi bi-person-arms-up"></i>Curso de vida</h2></div>
-      <div class="card-body"><div class="chart-box"><canvas id="chartCurso" aria-label="Pacientes por curso de vida" role="img"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -135,25 +128,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 </div>
 
+<?php if ($porMedico): ?>
 <div class="row g-3">
-  <div class="col-md-6 <?= $porMedico ? 'col-xl-4' : '' ?>">
-    <div class="card h-100">
-      <div class="card-header"><h2><i class="bi bi-gender-ambiguous"></i>Atenciones por sexo</h2></div>
-      <div class="card-body pt-2"><?= bar_list($porSexo) ?></div>
-    </div>
-  </div>
-  <div class="col-md-6 <?= $porMedico ? 'col-xl-4' : '' ?>">
-    <div class="card h-100">
-      <div class="card-header"><h2><i class="bi bi-shield-plus"></i>Atenciones por régimen</h2></div>
-      <div class="card-body pt-2"><?= bar_list($porRegimen) ?></div>
-    </div>
-  </div>
-  <?php if ($porMedico): ?>
-  <div class="col-xl-4">
+  <div class="col-12">
     <div class="card h-100">
       <div class="card-header"><h2><i class="bi bi-person-badge"></i>Atenciones por médico</h2></div>
       <div class="card-body pt-2"><?= bar_list($porMedico) ?></div>
     </div>
   </div>
-  <?php endif; ?>
 </div>
+<?php endif; ?>

@@ -32,10 +32,11 @@ return [
 
     // Historia clínica
     'consultas'             => ['Consultas@index', [ADM, MED, AUX]],
-    'consultas/atender'     => ['Consultas@atender', [MED]],
-    'consultas/editar'      => ['Consultas@editar', [MED]],
+    'consultas/rapida'      => ['Consultas@rapida', [ADM, MED]],
+    'consultas/atender'     => ['Consultas@atender', [ADM, MED]],
+    'consultas/editar'      => ['Consultas@editar', [ADM, MED]],
     'consultas/ver'         => ['Consultas@ver', [ADM, MED, AUX]],
-    'consultas/nota'        => ['Consultas@nota', [MED]],
+    'consultas/nota'        => ['Consultas@nota', [ADM, MED]],
 
     // PDF
     'pdf/historia'          => ['Pdf@historia', [ADM, MED, AUX]],

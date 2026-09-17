@@ -5,6 +5,9 @@ if ($puedeEditar) {
     $acciones = '<a class="btn btn-light border" href="' . url('pacientes/editar', ['id' => $p['id']]) . '"><i class="bi bi-pencil"></i> Editar datos</a>'
         . '<a class="btn btn-primary" href="' . url('admisiones/crear', ['paciente_id' => $p['id']]) . '"><i class="bi bi-box-arrow-in-right"></i> Admitir a sala de espera</a>';
 }
+if (has_role('administrador', 'medico')) {
+    $acciones .= '<a class="btn btn-outline-primary" href="' . url('consultas/rapida', ['paciente_id' => $p['id']]) . '"><i class="bi bi-capsule"></i> Evolución / fórmula rápida</a>';
+}
 $dato = static fn ($v): string => ($v === null || $v === '') ? '<span class="text-muted">—</span>' : e($v);
 echo page_head('Ficha del paciente', 'Registro desde ' . fecha($p['creado_en']), $acciones);
 ?>

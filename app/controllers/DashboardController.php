@@ -42,30 +42,6 @@ final class DashboardController extends Controller
             $serie[] = (int) ($porDia[$d] ?? 0);
         }
 
-        // Curso de vida (Resolución 3280 de 2018)
-        $g = DB::row(
-            "SELECT SUM(e <= 5) g1, SUM(e BETWEEN 6 AND 11) g2, SUM(e BETWEEN 12 AND 17) g3,
-                    SUM(e BETWEEN 18 AND 28) g4, SUM(e BETWEEN 29 AND 59) g5, SUM(e >= 60) g6
-             FROM (SELECT TIMESTAMPDIFF(YEAR, p.fecha_nacimiento, c.cerrada_en) AS e
-                   FROM consultas c JOIN pacientes p ON p.id = c.paciente_id WHERE {$cerradasMes}) t",
-            $rango
-        );
-        $grupos = [
-            'Primera infancia (0-5)' => (int) $g['g1'], 'Infancia (6-11)' => (int) $g['g2'], 'Adolescencia (12-17)' => (int) $g['g3'],
-            'Juventud (18-28)' => (int) $g['g4'], 'Adultez (29-59)' => (int) $g['g5'], 'Vejez (60+)' => (int) $g['g6'],
-        ];
-
-        $sexos = catalogo('sexo');
-        $porSexo = array_map(
-            static fn ($r) => [$sexos[$r['sexo']] ?? $r['sexo'], (int) $r['n']],
-            DB::all("SELECT p.sexo, COUNT(*) n FROM consultas c JOIN pacientes p ON p.id = c.paciente_id WHERE {$cerradasMes} GROUP BY p.sexo ORDER BY n DESC", $rango)
-        );
-
-        $porRegimen = array_map(
-            static fn ($r) => [$r['regimen'] ?: 'Sin dato', (int) $r['n']],
-            DB::all("SELECT a.regimen, COUNT(*) n FROM consultas c JOIN admisiones a ON a.id = c.admision_id WHERE {$cerradasMes} GROUP BY a.regimen ORDER BY n DESC", $rango)
-        );
-
         $topDx = DB::all(
             "SELECT d.codigo, MAX(d.descripcion) AS descripcion, COUNT(*) AS n
              FROM consulta_diagnosticos d JOIN consultas c ON c.id = d.consulta_id
@@ -110,9 +86,6 @@ final class DashboardController extends Controller
             'kpi'        => $kpi,
             'dias'       => $dias,
             'serie'      => $serie,
-            'grupos'     => $grupos,
-            'porSexo'    => $porSexo,
-            'porRegimen' => $porRegimen,
             'topDx'      => $topDx,
             'porMedico'  => $porMedico,
             'hoy'        => $hoy,

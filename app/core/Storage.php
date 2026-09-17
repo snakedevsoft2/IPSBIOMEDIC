@@ -44,7 +44,7 @@ final class Storage
         if ($rutaRel === '') {
             return false;
         }
-        if (self::enVercel()) {
+        if (self::enVercel() && !str_starts_with($rutaRel, 'assets/img/')) {
             return (bool) DB::value('SELECT 1 FROM archivos WHERE ruta = ?', [$rutaRel]);
         }
         return is_file(BASE_PATH . '/' . $rutaRel);
@@ -56,7 +56,7 @@ final class Storage
         if ($rutaRel === '') {
             return null;
         }
-        if (self::enVercel()) {
+        if (self::enVercel() && !str_starts_with($rutaRel, 'assets/img/')) {
             $fila = DB::row('SELECT mime, contenido FROM archivos WHERE ruta = ?', [$rutaRel]);
             return $fila ?: null;
         }
